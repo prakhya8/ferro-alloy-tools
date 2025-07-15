@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferro Alloy Calculator</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+    }
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #3498db;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .input-section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+    }
+    .input-section:hover {
+        transform: translateY(-3px);
+    }
+    .results {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 25px;
+        display: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+        border: 1px solid #e0e0e0;
+        padding: 12px;
+        text-align: left;
+    }
+    th {
+        background: linear-gradient(to bottom, #3498db, #2980b9);
+        color: white;
+        font-weight: 600;
+    }
+    tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    input, button, select {
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+    button {
+        background: linear-gradient(to bottom, #3498db, #2980b9);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 12px 20px;
+        margin-top: 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    }
+    button:hover {
+        background: linear-gradient(to bottom, #2980b9, #2573a7);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+    }
+    #adjustAlBtn {
+        background: linear-gradient(to bottom, #e67e22, #d35400);
+        margin-left: 15px;
+    }
+    #adjustAlBtn:hover {
+        background: linear-gradient(to bottom, #d35400, #ba4a00);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .alloy-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #3498db;
+    }
+    .alloy-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 18px;
+    }
+    .error {
+        color: #e74c3c;
+        font-weight: bold;
+        background-color: #fdecea;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    .note {
+        font-size: 0.9em;
+        color: #7f8c8d;
+        font-style: italic;
+        margin-top: 5px;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+    .checkbox-group input {
+        width: auto;
+        margin-right: 10px;
+    }
+    .warning {
+        color: #e67e22;
+        font-weight: bold;
+        background-color: #fef5e7;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    .success {
+        color: #27ae60;
+        font-weight: bold;
+        background-color: #eafaf1;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    .deoxidation-row {
+        background-color: #fff9e6;
+    }
+    .oxidation-row {
+        background-color: #ffe6e6;
+    }
+    .composition-row {
+        background-color: #e6ffe6;
+    }
+    .highlight {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .button-group {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    .cost-summary {
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+    .section-title {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+    @media (max-width: 768px) {
+        .button-group {
+            flex-direction: column;
+        }
+        #adjustAlBtn {
+            margin-left: 0;
+            margin-top: 10px;
+        }
+    }
+</style>
+</head>
+<body>
+<h1>Ferro Alloy Calculator SMS-2</h1>
+
+<div class="input-section">
+    <h2>Steel Bath Details</h2>
+    <div class="form-group">
+        <label for="initialWeight">Initial Steel Weight (tons):</label>
+        <input id="initialWeight" min="0.1" step="0.1" type="number" value="120">
+    </div>
+    
+    <h3>Initial Composition</h3>
+    <div class="form-group">
+        <label for="initialC">Carbon (C) %:</label>
+        <input id="initialC" min="0" step="0.01" type="number" value="0.03">
+    </div>
+    <div class="form-group">
+        <label for="initialMn">Manganese (Mn) %:</label>
+        <input id="initialMn" min="0" step="0.01" type="number" value="0.04">
+    </div>
+    <div class="form-group">
+        <label for="initialSi">Silicon (Si) %:</label>
+        <input id="initialSi" min="0" step="0.01" type="number" value="0.02">
+    </div>
+    <div class="form-group">
+        <label for="initialAl">Aluminum (Al) %:</label>
+        <input id="initialAl" min="0" step="0.01" type="number" value="0">
+    </div>
+    <div class="form-group">
+        <label for="initialO">Oxygen (O) ppm:</label>
+        <input id="initialO" min="0" step="1" type="number" value="1100">
+        <div class="note">Typical range: 50-300 ppm for killed steels</div>
+    </div>
+    
+    <h3>Target Composition</h3>
+    <div class="form-group">
+        <label for="targetC">Carbon (C) %:</label>
+        <input id="targetC" min="0" step="0.01" type="number" value="0.15">
+    </div>
+    <div class="form-group">
+        <label for="targetMn">Manganese (Mn) %:</label>
+        <input id="targetMn" min="0" step="0.01" type="number" value="0.80">
+    </div>
+    <div class="form-group">
+        <label for="targetSi">Silicon (Si) %:</label>
+        <input id="targetSi" min="0" step="0.01" type="number" value="0.25">
+    </div>
+    <div class="form-group">
+        <label for="targetAl">Aluminum (Al) %:</label>
+        <input id="targetAl" min="0" step="0.01" type="number" value="0.02">
+    </div>
+    <div class="form-group">
+        <label for="maxAl">Maximum Aluminum Addition (kg):</label>
+        <input id="maxAl" min="0" step="1" type="number" value="75">
+        <div class="note">Set to 0 for no limit</div>
+    </div>
+    <div class="form-group">
+        <label for="targetO">Target Oxygen (O) ppm:</label>
+        <input id="targetO" min="0" step="1" type="number" value="20">
+        <div class="note">Typical target: &lt;30 ppm for Al-killed steel</div>
+    </div>
+</div>
+
+<div class="input-section">
+    <h2>Process Conditions</h2>
+    <div class="form-group">
+        <label for="slagCarryover">Slag Carryover (% of steel weight):</label>
+        <input id="slagCarryover" max="5" min="0" step="0.1" type="number" value="0.1">
+        <div class="note">Typical range: 0.5-2%</div>
+    </div>
+    <div class="form-group">
+        <label for="processTemp">Process Temperature (°C):</label>
+        <input id="processTemp" max="1700" min="1500" step="10" type="number" value="1650">
+    </div>
+    <div class="checkbox-group">
+        <input checked id="useFesiDeox" type="checkbox">
+        <label for="useFesiDeox">Use Ferro-Silicon for deoxidation</label>
+    </div>
+</div>
+
+<div class="input-section">
+    <h2>Ferro Alloy Specifications</h2>
+    
+    <div class="alloy-section">
+        <div class="alloy-title">1. Silico-Manganese (SiMn)</div>
+        <div class="form-group">
+            <label for="simnC">Carbon (C) %:</label>
+            <input id="simnC" min="0" step="0.1" type="number" value="2.5">
+        </div>
+        <div class="form-group">
+            <label for="simnMn">Manganese (Mn) %:</label>
+            <input id="simnMn" min="0" step="0.1" type="number" value="65">
+        </div>
+        <div class="form-group">
+            <label for="simnSi">Silicon (Si) %:</label>
+            <input id="simnSi" min="0" step="0.1" type="number" value="15">
+        </div>
+        <div class="form-group">
+            <label for="simnAl">Aluminum (Al) %:</label>
+            <input id="simnAl" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="simnCost">Cost (₹/ton):</label>
+            <input id="simnCost" min="0" step="100" type="number" value="85000">
+        </div>
+        <div class="form-group">
+            <label for="simnRecovery">Base Recovery Rate (%):</label>
+            <input id="simnRecovery" max="100" min="0" step="1" type="number" value="85">
+            <div class="note">Before oxygen effects</div>
+        </div>
+    </div>
+    
+    <div class="alloy-section">
+        <div class="alloy-title">2. Coke</div>
+        <div class="form-group">
+            <label for="cokeC">Carbon (C) %:</label>
+            <input id="cokeC" min="0" step="0.1" type="number" value="99">
+        </div>
+        <div class="form-group">
+            <label for="cokeMn">Manganese (Mn) %:</label>
+            <input id="cokeMn" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="cokeSi">Silicon (Si) %:</label>
+            <input id="cokeSi" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="cokeAl">Aluminum (Al) %:</label>
+            <input id="cokeAl" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="cokeCost">Cost (₹/ton):</label>
+            <input id="cokeCost" min="0" step="100" type="number" value="30000">
+        </div>
+        <div class="form-group">
+            <label for="cokeRecovery">Base Recovery Rate (%):</label>
+            <input id="cokeRecovery" max="100" min="0" step="1" type="number" value="90">
+            <div class="note">Before oxygen effects</div>
+        </div>
+    </div>
+    
+    <div class="alloy-section">
+        <div class="alloy-title">3. Ferro-Silicon (FeSi)</div>
+        <div class="form-group">
+            <label for="fesiC">Carbon (C) %:</label>
+            <input id="fesiC" min="0" step="0.01" type="number" value="0.5">
+        </div>
+        <div class="form-group">
+            <label for="fesiMn">Manganese (Mn) %:</label>
+            <input id="fesiMn" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="fesiSi">Silicon (Si) %:</label>
+            <input id="fesiSi" min="0" step="0.1" type="number" value="70">
+        </div>
+        <div class="form-group">
+            <label for="fesiAl">Aluminum (Al) %:</label>
+            <input id="fesiAl" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="fesiCost">Cost (₹/ton):</label>
+            <input id="fesiCost" min="0" step="100" type="number" value="115000">
+        </div>
+        <div class="form-group">
+            <label for="fesiRecovery">Base Recovery Rate (%):</label>
+            <input id="fesiRecovery" max="100" min="0" step="1" type="number" value="85">
+            <div class="note">Before oxygen effects</div>
+        </div>
+    </div>
+    
+    <div class="alloy-section">
+        <div class="alloy-title">4. Aluminum (Al)</div>
+        <div class="form-group">
+            <label for="alC">Carbon (C) %:</label>
+            <input id="alC" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="alMn">Manganese (Mn) %:</label>
+            <input id="alMn" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="alSi">Silicon (Si) %:</label>
+            <input id="alSi" min="0" step="0.1" type="number" value="0">
+        </div>
+        <div class="form-group">
+            <label for="alAl">Aluminum (Al) %:</label>
+            <input id="alAl" min="0" step="0.1" type="number" value="98">
+        </div>
+        <div class="form-group">
+            <label for="alCost">Cost (₹/ton):</label>
+            <input id="alCost" min="0" step="100" type="number" value="250000">
+        </div>
+        <div class="form-group">
+            <label for="alRecovery">Base Recovery Rate (%):</label>
+            <input id="alRecovery" max="100" min="0" step="1" type="number" value="98">
+            <div class="note">Before oxygen effects</div>
+        </div>
+    </div>
+</div>
+
+<div class="button-group">
+    <button id="calculateBtn">Calculate Required Alloy Quantities</button>
+    <button id="adjustAlBtn">Adjust Aluminum to Meet Target</button>
+</div>
+
+<div class="results" id="results">
+    <h2>Results</h2>
+    <div class="error" id="errorMessage"></div>
+    <div class="warning" id="alWarning"></div>
+    <div class="success" id="alSuccess"></div>
+    
+    <h3 class="section-title">Recommended Ferro Alloy Quantities</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Alloy Type</th>
+                <th>Quantity (tons)</th>
+                <th>Cost (₹)</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody id="alloyResults">
+            <!-- Results will be inserted here -->
+        </tbody>
+    </table>
+    
+    <h3 class="section-title">Final Steel Composition</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Target (%)</th>
+                <th>Achieved (%)</th>
+                <th>Overall Recovery (%)</th>
+            </tr>
+        </thead>
+        <tbody id="finalComposition">
+            <!-- Results will be inserted here -->
+        </tbody>
+    </table>
+    
+    <div class="cost-summary">
+        <h3>Total Ferro Alloy Cost: ₹<span id="totalCost">0</span></h3>
+    </div>
+    
+    <div id="optimizationResults" style="margin-top: 30px;">
+        <h3 class="section-title">Cost Optimization Recommendations</h3>
+        <div class="note">Alternative alloy combinations sorted by cost efficiency</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Option</th>
+                    <th>Alloy Mix</th>
+                    <th>Total Cost (₹)</th>
+                    <th>Cost/kg C</th>
+                    <th>Cost/kg Mn</th>
+                    <th>Cost/kg Si</th>
+                    <th>Cost/kg Al</th>
+                </tr>
+            </thead>
+            <tbody id="optimizationOptions">
+                <!-- Results will be inserted here -->
+            </tbody>
+        </table>
+        <h4>Recommended Strategy:</h4>
+        <div id="recommendationText" style="padding: 15px; background-color: #f8f9fa; border-radius: 6px;"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Atomic weights for calculations
+    const atomicWeights = {
+        'C': 12.01,
+        'Mn': 54.94,
+        'Si': 28.09,
+        'Al': 26.98,
+        'O': 16.00
+    };
+    
+    // Stoichiometric ratios for oxidation reactions
+    const oxidationRatios = {
+        'Al': { 'O': 1.5, product: 'Al2O3' },  // 4Al + 3O2 → 2Al2O3
+        'Si': { 'O': 2, product: 'SiO2' },     // Si + O2 → SiO2
+        'Mn': { 'O': 1, product: 'MnO' },      // Mn + ½O2 → MnO
+        'C': { 'O': 1, product: 'CO' }         // C + ½O2 → CO
+    };
+    
+    // Event listeners
+    document.getElementById('calculateBtn').addEventListener('click', function() {
+        try {
+            calculate();
+        } catch (error) {
+            showError("Error: " + error);
+            console.error(error);
+        }
+    });
+
+    document.getElementById('adjustAlBtn').addEventListener('click', function() {
+        try {
+            updateResultsWithAdditionalAl();
+        } catch (error) {
+            showError("Error adjusting aluminum: " + error);
+            console.error(error);
+        }
+    });
+
+    // Helper functions
+    function showError(message) {
+        const errorElement = document.getElementById('errorMessage');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+    
+    function showWarning(message) {
+        const warningElement = document.getElementById('alWarning');
+        warningElement.textContent = message;
+        warningElement.style.display = 'block';
+    }
+    
+    function showSuccess(message) {
+        const successElement = document.getElementById('alSuccess');
+        successElement.textContent = message;
+        successElement.style.display = 'block';
+    }
+    
+    function hideMessages() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('alWarning').style.display = 'none';
+        document.getElementById('alSuccess').style.display = 'none';
+    }
+
+    // Calculate additional aluminum needed
+    function calculateAdditionalAluminum() {
+        try {
+            // Get the current final composition values
+            const initialWeight = parseFloat(document.getElementById('initialWeight').value);
+            const initialAl = parseFloat(document.getElementById('initialAl').value) / 100;
+            const targetAl = parseFloat(document.getElementById('targetAl').value) / 100;
+            
+            // Get the achieved aluminum from the table
+            const achievedAlElement = document.getElementById('finalComposition').rows[3].cells[2];
+            const achievedAl = parseFloat(achievedAlElement.textContent) / 100;
+            
+            // Calculate the additional aluminum needed (kg)
+            const additionalAlNeeded = (targetAl - achievedAl) * initialWeight * 1000;
+            
+            // Get aluminum alloy specifications
+            const alAl = parseFloat(document.getElementById('alAl').value) / 100;
+            const alRecovery = parseFloat(document.getElementById('alRecovery').value) / 100;
+            
+            // Calculate required aluminum addition (tons)
+            const additionalAlQty = additionalAlNeeded / (alAl * alRecovery * 1000);
+            
+            return {
+                additionalAlNeeded: additionalAlNeeded,
+                additionalAlQty: additionalAlQty,
+                newAchievedAl: targetAl * 100 // New achieved will be exactly target
+            };
+        } catch (error) {
+            console.error("Error calculating additional aluminum:", error);
+            return null;
+        }
+    }
+
+    // Update results with additional aluminum
+    function updateResultsWithAdditionalAl() {
+        try {
+            // Calculate the additional aluminum needed
+            const alData = calculateAdditionalAluminum();
+            if (!alData) return;
+            
+            // Get aluminum cost per ton
+            const alCostPerTon = parseFloat(document.getElementById('alCost').value);
+            
+            // Find the aluminum row in the alloy results
+            const alloyResults = document.getElementById('alloyResults');
+            let alRow = null;
+            for (let i = 0; i < alloyResults.rows.length; i++) {
+                if (alloyResults.rows[i].cells[0].textContent.includes("Aluminum")) {
+                    alRow = alloyResults.rows[i];
+                    break;
+                }
+            }
+            
+            // Calculate new aluminum cost
+            let newAlQty, newAlCost;
+            if (alRow) {
+                const currentAlQty = parseFloat(alRow.cells[1].textContent);
+                newAlQty = currentAlQty + alData.additionalAlQty;
+                newAlCost = newAlQty * alCostPerTon;
+                
+                // Update existing row
+                alRow.cells[1].textContent = newAlQty.toFixed(3);
+                alRow.cells[2].textContent = '₹' + newAlCost.toFixed(2);
+                alRow.cells[3].textContent = "Includes additional " + alData.additionalAlQty.toFixed(3) + "t to reach target";
+            } else {
+                // Create new row if aluminum wasn't added originally
+                newAlQty = alData.additionalAlQty;
+                newAlCost = newAlQty * alCostPerTon;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>Aluminum</td>
+                    <td>${newAlQty.toFixed(3)}</td>
+                    <td>₹${newAlCost.toFixed(2)}</td>
+                    <td>Added to reach target</td>
+                `;
+                alloyResults.appendChild(row);
+            }
+            
+            // Update the final composition table
+            const finalCompTable = document.getElementById('finalComposition');
+            finalCompTable.rows[3].cells[2].textContent = alData.newAchievedAl.toFixed(2);
+            
+            // Update the recovery percentage for Al
+            const initialAl = parseFloat(document.getElementById('initialAl').value);
+            const targetAl = parseFloat(document.getElementById('targetAl').value);
+            const recoveryAl = (targetAl - initialAl) > 0 ? 
+                (alData.newAchievedAl - initialAl) / (targetAl - initialAl) * 100 : 0;
+            finalCompTable.rows[3].cells[3].textContent = recoveryAl.toFixed(1);
+            
+            // Update total cost
+            const currentTotal = parseFloat(document.getElementById('totalCost').textContent);
+            const additionalCost = alData.additionalAlQty * alCostPerTon;
+            document.getElementById('totalCost').textContent = (currentTotal + additionalCost).toFixed(2);
+            
+            // Show success message
+            showSuccess(`Added ${alData.additionalAlQty.toFixed(3)}t aluminum to achieve target composition.`);
+            
+        } catch (error) {
+            showError("Error updating aluminum: " + error);
+            console.error(error);
+        }
+    }
+
+    // Add alloy row to results table
+    function addAlloyRow(name, qty, cost, notes = "") {
+        if (qty > 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${name}</td>
+                <td>${qty.toFixed(3)}</td>
+                <td>₹${cost.toFixed(2)}</td>
+                <td>${notes}</td>
+            `;
+            document.getElementById('alloyResults').appendChild(row);
+        }
+    }
+
+    // Main calculation function
+    function calculate() {
+        // Clear previous messages
+        hideMessages();
+        
+        try {
+            // Get steel bath parameters
+            const initialWeight = parseFloat(document.getElementById('initialWeight').value);
+            if (isNaN(initialWeight)) throw "Please enter a valid steel weight";
+            if (initialWeight <= 0) throw "Steel weight must be greater than 0";
+            
+            // Get initial composition
+            const initialC = parseFloat(document.getElementById('initialC').value) / 100;
+            const initialMn = parseFloat(document.getElementById('initialMn').value) / 100;
+            const initialSi = parseFloat(document.getElementById('initialSi').value) / 100;
+            const initialAl = parseFloat(document.getElementById('initialAl').value) / 100;
+            const initialO = parseFloat(document.getElementById('initialO').value) / 1000000; // ppm to fraction
+            
+            // Get target composition
+            const targetC = parseFloat(document.getElementById('targetC').value) / 100;
+            const targetMn = parseFloat(document.getElementById('targetMn').value) / 100;
+            const targetSi = parseFloat(document.getElementById('targetSi').value) / 100;
+            const targetAl = parseFloat(document.getElementById('targetAl').value) / 100;
+            const maxAlAddition = parseFloat(document.getElementById('maxAl').value);
+            const targetO = parseFloat(document.getElementById('targetO').value) / 1000000; // ppm to fraction
+            
+            // Get process conditions
+            const slagCarryover = parseFloat(document.getElementById('slagCarryover').value) / 100;
+            const slagOxygen = 3000 / 1000000; // 3000 ppm O in slag
+            const processTemp = parseFloat(document.getElementById('processTemp').value);
+            const useFesiDeox = document.getElementById('useFesiDeox').checked;
+            
+            // Get alloy specifications
+            const alloys = [
+                {
+                    name: "Silico-Manganese",
+                    id: "simn",
+                    C: parseFloat(document.getElementById('simnC').value) / 100,
+                    Mn: parseFloat(document.getElementById('simnMn').value) / 100,
+                    Si: parseFloat(document.getElementById('simnSi').value) / 100,
+                    Al: parseFloat(document.getElementById('simnAl').value) / 100,
+                    cost: parseFloat(document.getElementById('simnCost').value),
+                    baseRecovery: parseFloat(document.getElementById('simnRecovery').value) / 100
+                },
+                {
+                    name: "Coke",
+                    id: "coke",
+                    C: parseFloat(document.getElementById('cokeC').value) / 100,
+                    Mn: parseFloat(document.getElementById('cokeMn').value) / 100,
+                    Si: parseFloat(document.getElementById('cokeSi').value) / 100,
+                    Al: parseFloat(document.getElementById('cokeAl').value) / 100,
+                    cost: parseFloat(document.getElementById('cokeCost').value),
+                    baseRecovery: parseFloat(document.getElementById('cokeRecovery').value) / 100
+                },
+                {
+                    name: "Ferro-Silicon",
+                    id: "fesi",
+                    C: parseFloat(document.getElementById('fesiC').value) / 100,
+                    Mn: parseFloat(document.getElementById('fesiMn').value) / 100,
+                    Si: parseFloat(document.getElementById('fesiSi').value) / 100,
+                    Al: parseFloat(document.getElementById('fesiAl').value) / 100,
+                    cost: parseFloat(document.getElementById('fesiCost').value),
+                    baseRecovery: parseFloat(document.getElementById('fesiRecovery').value) / 100
+                },
+                {
+                    name: "Aluminum",
+                    id: "al",
+                    C: parseFloat(document.getElementById('alC').value) / 100,
+                    Mn: parseFloat(document.getElementById('alMn').value) / 100,
+                    Si: parseFloat(document.getElementById('alSi').value) / 100,
+                    Al: parseFloat(document.getElementById('alAl').value) / 100,
+                    cost: parseFloat(document.getElementById('alCost').value),
+                    baseRecovery: parseFloat(document.getElementById('alRecovery').value) / 100
+                }
+            ];
+            
+            // Calculate total available oxygen (kg)
+            const steelOxygen = initialWeight * initialO * 1000; // kg
+            const slagOxygenTotal = initialWeight * slagCarryover * slagOxygen * 1000; // kg
+            const totalOxygen = steelOxygen + slagOxygenTotal;
+            
+            // Calculate required element additions before oxidation (kg)
+            const finalWeight = initialWeight; // Approximation
+            const requiredC = (finalWeight * targetC - initialWeight * initialC) * 1000;
+            const requiredMn = (finalWeight * targetMn - initialWeight * initialMn) * 1000;
+            const requiredSi = (finalWeight * targetSi - initialWeight * initialSi) * 1000;
+            const requiredAl = (finalWeight * targetAl - initialWeight * initialAl) * 1000;
+            
+            // Calculate oxygen consumption by each element (in priority order: Al > Si > Mn > C)
+            let remainingOxygen = totalOxygen;
+            const oxygenConsumption = {
+                'Al': 0,
+                'Si': 0,
+                'Mn': 0,
+                'C': 0
+            };
+
+            // 1. Aluminum oxidation (first priority)
+            if (remainingOxygen > 0 && maxAlAddition > 0) {
+                const alOxygenPotential = maxAlAddition * oxidationRatios['Al']['O'] * (atomicWeights['O']/atomicWeights['Al']);
+                oxygenConsumption['Al'] = Math.min(alOxygenPotential, remainingOxygen);
+                remainingOxygen -= oxygenConsumption['Al'];
+            }
+
+            // 2. Silicon oxidation (second priority)
+            if (remainingOxygen > 0) {
+                const maxSiOxidation = requiredSi * oxidationRatios['Si']['O'] * (atomicWeights['O']/atomicWeights['Si']);
+                oxygenConsumption['Si'] = Math.min(maxSiOxidation, remainingOxygen);
+                remainingOxygen -= oxygenConsumption['Si'];
+            }
+
+            // 3. Manganese oxidation (third priority)
+            if (remainingOxygen > 0) {
+                const maxMnOxidation = requiredMn * oxidationRatios['Mn']['O'] * (atomicWeights['O']/atomicWeights['Mn']);
+                oxygenConsumption['Mn'] = Math.min(maxMnOxidation, remainingOxygen);
+                remainingOxygen -= oxygenConsumption['Mn'];
+            }
+
+            // 4. Carbon oxidation (last priority)
+            if (remainingOxygen > 0) {
+                const maxCOxidation = requiredC * oxidationRatios['C']['O'] * (atomicWeights['O']/atomicWeights['C']);
+                oxygenConsumption['C'] = Math.min(maxCOxidation, remainingOxygen);
+                remainingOxygen -= oxygenConsumption['C'];
+            }
+
+            // Calculate actual element losses to oxidation (kg)
+            const elementLosses = {
+                'Al': oxygenConsumption['Al'] / (oxidationRatios['Al']['O'] * (atomicWeights['O']/atomicWeights['Al'])),
+                'Si': oxygenConsumption['Si'] / (oxidationRatios['Si']['O'] * (atomicWeights['O']/atomicWeights['Si'])),
+                'Mn': oxygenConsumption['Mn'] / (oxidationRatios['Mn']['O'] * (atomicWeights['O']/atomicWeights['Mn'])),
+                'C': oxygenConsumption['C'] / (oxidationRatios['C']['O'] * (atomicWeights['O']/atomicWeights['C']))
+            };
+
+            // Calculate net required additions after oxidation (kg)
+            const netRequiredC = requiredC + (elementLosses['C'] || 0);
+            const netRequiredMn = requiredMn + (elementLosses['Mn'] || 0);
+            const netRequiredSi = requiredSi + (elementLosses['Si'] || 0);
+            const netRequiredAl = requiredAl + (elementLosses['Al'] || 0);
+
+            // Calculate aluminum addition (respecting the maxAlAddition cap)
+            let alQty = 0;
+            let alLimited = false;
+            if (maxAlAddition > 0) {
+                // Calculate how much Al we can actually add (after oxidation losses)
+                const alNeededAfterOxidation = netRequiredAl;
+                const maxPossibleAlAddition = Math.min(maxAlAddition, alNeededAfterOxidation / (alloys[3].Al * alloys[3].baseRecovery));
+                
+                alQty = maxPossibleAlAddition / 1000; // Convert kg to tons
+                if (maxPossibleAlAddition < alNeededAfterOxidation) {
+                    alLimited = true;
+                }
+            } else if (netRequiredAl > 0) {
+                // No cap, add all needed aluminum
+                alQty = netRequiredAl / (alloys[3].Al * alloys[3].baseRecovery * 1000);
+            }
+
+            // Calculate optimal alloy quantities considering oxidation losses
+            let simnQty = 0, cokeQty = 0, fesiQty = 0;
+            let deoxFesiQty = 0;
+            let deoxSiUsed = 0;
+
+            // For Carbon - use Coke (cheapest carbon source)
+            if (netRequiredC > 0) {
+               cokeQty = (netRequiredC / 1000) / (alloys[1].C * alloys[1].baseRecovery);
+
+           }
+
+            // For Manganese - use SiMn
+            if (netRequiredMn > 0) {
+                simnQty = (netRequiredMn / 1000) / (alloys[0].Mn * alloys[0].baseRecovery);
+            }
+
+            // === 1. FIRST PRIORITY: Use FeSi for deoxidation if enabled ===
+            if (useFesiDeox && remainingOxygen > 0) {
+                deoxSiUsed = remainingOxygen / 1.14; // Si needed in kg to remove O
+                deoxFesiQty = deoxSiUsed / (alloys[2].Si * alloys[2].baseRecovery * 1000); // tons of FeSi for deoxidation
+                fesiQty = deoxFesiQty; // Do NOT add, just set for deoxidation
+                remainingOxygen = 0; // Deoxidation complete
+            }
+
+            // === 2. Calculate how much Si from FeSi contributes to composition ===
+            const totalSiFromFesi = fesiQty * alloys[2].Si * alloys[2].baseRecovery * 1000; // total Si (kg)
+            const siFromFesi = Math.max(0, totalSiFromFesi - deoxSiUsed); // exclude deoxidation Si
+
+            // === 3. Determine remaining silicon needed to meet target ===
+            let remainingSiNeeded = netRequiredSi - siFromFesi;
+
+            // === 4. Use SiMn if it helps with the remaining Si need ===
+            // Check how much SiMn we already need for Mn
+            let simnQtyMn = (netRequiredMn / 1000) / (alloys[0].Mn * alloys[0].baseRecovery);
+            let siFromSimn = simnQtyMn * alloys[0].Si * alloys[0].baseRecovery * 1000; // in kg
+            let siFromSimnUsed = Math.min(remainingSiNeeded, siFromSimn);
+
+            // Reduce the Si gap by what SiMn provides
+            remainingSiNeeded -= siFromSimnUsed;
+
+            // If more silicon is still needed, use additional FeSi
+            if (remainingSiNeeded > 0) {
+                const additionalFeSiQty = remainingSiNeeded / (alloys[2].Si * alloys[2].baseRecovery * 1000);
+                fesiQty += additionalFeSiQty;
+            }
+
+            // === 5. Final SiMn quantity is max required for Mn or Si ===
+            let simnQtySi = remainingSiNeeded > 0
+                ? remainingSiNeeded / (alloys[0].Si * alloys[0].baseRecovery * 1000)
+                : 0;
+
+            simnQty = Math.max(simnQtyMn, simnQtySi);
+// Simple post-correction for carbon already added via SiMn & FeSi
+const extraC = ((simnQty * alloys[0].C + fesiQty * alloys[2].C) * alloys[0].baseRecovery * 1000); // kg
+const cokeReduction = extraC / (alloys[1].C * alloys[1].baseRecovery * 1000); // tons
+cokeQty = Math.max(0, cokeQty - cokeReduction);
+            
+            // Calculate costs
+            const simnCost = simnQty * alloys[0].cost;
+            const cokeCost = cokeQty * alloys[1].cost;
+            const fesiCost = fesiQty * alloys[2].cost;
+            const alCost = alQty * alloys[3].cost;
+            const totalCost = simnCost + cokeCost + fesiCost + alCost;
+            
+            // Display alloy quantities and costs with deoxidation notes
+            const alloyResults = document.getElementById('alloyResults');
+            alloyResults.innerHTML = '';
+            
+            addAlloyRow("Silico-Manganese", simnQty, simnCost);
+            addAlloyRow("Coke", cokeQty, cokeCost);
+            
+            if (fesiQty > 0) {
+                let notes = "";
+                if (deoxFesiQty > 0) {
+                    notes = `Includes ${deoxFesiQty.toFixed(3)}t (${deoxSiUsed.toFixed(2)}kg Si) for deoxidation`;
+                }
+                addAlloyRow("Ferro-Silicon", fesiQty, fesiCost, notes);
+            }
+            
+            if (alQty > 0) {
+                addAlloyRow("Aluminum", alQty, alCost, 
+                           alLimited ? `Capped at ${maxAlAddition}kg addition` : "");
+            }
+            
+            if (alLimited) {
+                showWarning(`Aluminum addition capped at ${maxAlAddition}kg. Target Al may not be achieved.`);
+            }
+            
+            // Calculate final composition and recovery
+            const finalComposition = document.getElementById('finalComposition');
+            finalComposition.innerHTML = '';
+            
+            // Calculate actual additions considering recovery and oxidation
+            const actualC = (cokeQty * alloys[1].C * alloys[1].baseRecovery * 1000) - (elementLosses['C'] || 0);
+            const actualMn = (simnQty * alloys[0].Mn * alloys[0].baseRecovery * 1000) - (elementLosses['Mn'] || 0);
+            const actualSi = ((simnQty * alloys[0].Si * alloys[0].baseRecovery + 
+                             fesiQty * alloys[2].Si * alloys[2].baseRecovery) * 1000) - (elementLosses['Si'] || 0);
+            const actualAl = (alQty * alloys[3].Al * alloys[3].baseRecovery * 1000) - (elementLosses['Al'] || 0);
+            
+            // Calculate achieved percentages
+            const achievedC = (initialWeight * initialC * 1000 + actualC) / (initialWeight * 1000) * 100;
+            const achievedMn = (initialWeight * initialMn * 1000 + actualMn) / (initialWeight * 1000) * 100;
+            const achievedSi = (initialWeight * initialSi * 1000 + actualSi) / (initialWeight * 1000) * 100;
+            const achievedAl = (initialWeight * initialAl * 1000 + actualAl) / (initialWeight * 1000) * 100;
+            const achievedO = targetO * 100; // Assuming we achieve target oxygen
+            
+            // Calculate overall recovery percentages
+            const recoveryC = (targetC*100 - initialC*100) > 0 ? 
+                (achievedC - initialC*100) / (targetC*100 - initialC*100) * 100 : 0;
+            const recoveryMn = (targetMn*100 - initialMn*100) > 0 ? 
+                (achievedMn - initialMn*100) / (targetMn*100 - initialMn*100) * 100 : 0;
+            const recoverySi = (targetSi*100 - initialSi*100) > 0 ? 
+                (achievedSi - initialSi*100) / (targetSi*100 - initialSi*100) * 100 : 0;
+            const recoveryAl = (targetAl*100 - initialAl*100) > 0 ? 
+                (achievedAl - initialAl*100) / (targetAl*100 - initialAl*100) * 100 : 0;
+            
+            const addFinalRow = (element, target, achieved, recovery) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${element}</td>
+                    <td>${(target*100).toFixed(2)}</td>
+                    <td>${achieved.toFixed(2)}</td>
+                    <td>${recovery.toFixed(1)}</td>
+                `;
+                finalComposition.appendChild(row);
+            };
+            
+            addFinalRow('C', targetC, achievedC, recoveryC);
+            addFinalRow('Mn', targetMn, achievedMn, recoveryMn);
+            addFinalRow('Si', targetSi, achievedSi, recoverySi);
+            addFinalRow('Al', targetAl, achievedAl, recoveryAl);
+            addFinalRow('O (ppm)', targetO, achievedO, 100);
+            
+            // Calculate cost per kg for each element
+            const costPerKg = {
+                C: cokeQty > 0 ? cokeCost / (cokeQty * alloys[1].C * alloys[1].baseRecovery * 1000) : 0,
+                Mn: simnQty > 0 ? simnCost / (simnQty * alloys[0].Mn * alloys[0].baseRecovery * 1000) : 0,
+                Si: (simnQty > 0 || fesiQty > 0) ? 
+                    (simnCost * (alloys[0].Si/alloys[0].Mn) + fesiCost) / 
+                    (simnQty * alloys[0].Si * alloys[0].baseRecovery * 1000 + 
+                     fesiQty * alloys[2].Si * alloys[2].baseRecovery * 1000) : 0,
+                Al: alQty > 0 ? alCost / (alQty * alloys[3].Al * alloys[3].baseRecovery * 1000) : 0
+            };
+            
+            // Generate optimization alternatives
+            const optimizationOptions = [
+                {
+                    name: "Current Selection",
+                    alloys: [
+                        {name: "SiMn", qty: simnQty},
+                        {name: "Coke", qty: cokeQty},
+                        {name: "FeSi", qty: fesiQty},
+                        {name: "Al", qty: alQty}
+                    ],
+                    cost: totalCost,
+                    costPerKg: {...costPerKg}
+                },
+                {
+                    name: "Max SiMn (Reduce FeSi)",
+                    alloys: [
+                        {name: "SiMn", qty: Math.max(simnQty, (netRequiredMn + netRequiredSi)/1000/(alloys[0].Mn * alloys[0].baseRecovery))},
+                        {name: "Coke", qty: cokeQty},
+                        {name: "Al", qty: alQty}
+                    ],
+                    cost: 0, // Will be calculated
+                    costPerKg: {C: 0, Mn: 0, Si: 0, Al: 0}
+                },
+                {
+                    name: "FeMn + FeSi (If available)",
+                    alloys: [
+                        {name: "FeMn", qty: netRequiredMn/1000/(0.8 * 0.9)}, // Assuming 80% Mn, 90% recovery
+                        {name: "FeSi", qty: (netRequiredSi/1000 + (useFesiDeox ? deoxFesiQty : 0))/(0.7 * 0.8)},
+                        {name: "Coke", qty: cokeQty},
+                        {name: "Al", qty: alQty}
+                    ],
+                    cost: 0, // Will be calculated
+                    costPerKg: {C: 0, Mn: 0, Si: 0, Al: 0}
+                }
+            ];
+            
+            // Calculate costs for alternative options
+            optimizationOptions.forEach(option => {
+                if (option.name !== "Current Selection") {
+                    let optionCost = 0;
+                    option.alloys.forEach(alloy => {
+                        if (alloy.name === "SiMn") {
+                            optionCost += alloy.qty * alloys[0].cost;
+                            option.costPerKg.Mn = alloy.qty > 0 ? 
+                                (alloy.qty * alloys[0].cost) / (alloy.qty * alloys[0].Mn * alloys[0].baseRecovery * 1000) : 0;
+                            option.costPerKg.Si = alloy.qty > 0 ? 
+                                (alloy.qty * alloys[0].cost * (alloys[0].Si/alloys[0].Mn)) / 
+                                (alloy.qty * alloys[0].Si * alloys[0].baseRecovery * 1000) : 0;
+                        } else if (alloy.name === "FeMn") {
+                            optionCost += alloy.qty * 65000; // Assuming ₹65,000/ton for FeMn
+                            option.costPerKg.Mn = alloy.qty > 0 ? 
+                                (alloy.qty * 65000) / (alloy.qty * 0.8 * 0.9 * 1000) : 0;
+                        } else if (alloy.name === "FeSi") {
+                            optionCost += alloy.qty * alloys[2].cost;
+                            option.costPerKg.Si = alloy.qty > 0 ? 
+                                (alloy.qty * alloys[2].cost) / (alloy.qty * alloys[2].Si * alloys[2].baseRecovery * 1000) : 0;
+                        } else if (alloy.name === "Coke") {
+                            optionCost += alloy.qty * alloys[1].cost;
+                            option.costPerKg.C = alloy.qty > 0 ? 
+                                (alloy.qty * alloys[1].cost) / (alloy.qty * alloys[1].C * alloys[1].baseRecovery * 1000) : 0;
+                        } else if (alloy.name === "Al") {
+                            optionCost += alloy.qty * alloys[3].cost;
+                            option.costPerKg.Al = alloy.qty > 0 ? 
+                                (alloy.qty * alloys[3].cost) / (alloy.qty * alloys[3].Al * alloys[3].baseRecovery * 1000) : 0;
+                        }
+                    });
+                    option.cost = optionCost;
+                }
+            });
+            
+            // Display optimization results
+            const optimizationTable = document.getElementById('optimizationOptions');
+            optimizationTable.innerHTML = '';
+            
+            optimizationOptions.forEach(option => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${option.name}</td>
+                    <td>${option.alloys.filter(a => a.qty > 0).map(a => `${a.name}: ${a.qty.toFixed(3)}t`).join('<br>')}</td>
+                    <td>₹${option.cost.toFixed(2)}</td>
+                    <td>${option.costPerKg.C ? '₹' + option.costPerKg.C.toFixed(2) : '-'}</td>
+                    <td>${option.costPerKg.Mn ? '₹' + option.costPerKg.Mn.toFixed(2) : '-'}</td>
+                    <td>${option.costPerKg.Si ? '₹' + option.costPerKg.Si.toFixed(2) : '-'}</td>
+                    <td>${option.costPerKg.Al ? '₹' + option.costPerKg.Al.toFixed(2) : '-'}</td>
+                `;
+                optimizationTable.appendChild(row);
+            });
+            
+            // Generate recommendation text
+            let recommendation = "For optimal cost efficiency:";
+            
+            // Check if FeSi deoxidation would help
+            if (remainingOxygen > 0 && !useFesiDeox) {
+                recommendation += "<br>- Enable FeSi deoxidation to utilize remaining oxygen";
+            }
+            
+            // Check if SiMn is more cost effective for Si than FeSi
+            if (costPerKg.Si > 120 && netRequiredSi > 0) {
+                recommendation += "<br>- Consider increasing SiMn usage to reduce FeSi requirements";
+            }
+            
+            // Check if current Mn source is expensive
+            if (costPerKg.Mn > 90 && netRequiredMn > 0) {
+                recommendation += "<br>- Evaluate FeMn as alternative Mn source (if available)";
+            }
+            
+            // Check if Al usage can be optimized
+            if (costPerKg.Al > 500 && netRequiredAl > 0) {
+                recommendation += "<br>- Consider using Al-containing alloys (like FeSiAl) for partial Al addition";
+            }
+            
+            document.getElementById('recommendationText').innerHTML = recommendation;
+            
+            // Display total cost
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+            
+            // Show results section
+            document.getElementById('results').style.display = 'block';
+            
+        } catch (error) {
+            showError("Error: " + error);
+            console.error(error);
+        }
+    }
+});
+</script>
+</body>
+</html>
